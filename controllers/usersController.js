@@ -1,15 +1,29 @@
+const db = require("../models");
+
 class UsersController {
-  get(req, res) {
-    res.send("routing untuk create users");
+  async get(req, res) {
+    const data = await db.users.findAll({ attributes: ["id", "full_name"] });
+    res.json(data);
   }
-  post(req, res) {
-    res.send("routing untuk read users");
+  async post(req, res) {
+    const fullName = req.body["full_name"];
+    await db.users.create({
+      full_name: fullName,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    res.send("sucess insert data " + fullName);
   }
-  put(req, res) {
-    res.send("routing untuk update users");
+  async put(req, res) {
+    const fullName = req.body["full_name"];
+    const id = req.body.id;
+    await db.users.update({ full_name: fullName }, { where: { id: id } });
+    res.send(`success update id ${id} with new full name ${fullName}`);
   }
-  delete(req, res) {
-    res.send("routing untuk delete users");
+  async delete(req, res) {
+    const id = req.query.id;
+    await db.users.destroy({ where: { id: id } });
+    res.send("sucess delete data from users with id " + id);
   }
 }
 
